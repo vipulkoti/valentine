@@ -6,19 +6,19 @@
 <title>Apeksha ❤️ My Forever Valentine</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Dancing+Script:wght@700&display=swap');
-img {
-  width: 100%;
-  max-height: 320px;          /* ← increase from 280px */
-  height: auto;               /* add this */
-  object-fit: cover;          /* or contain */
-  object-position: 50% 25%;   /* add this line */
-  border-radius: 24px;
-  margin: 20px 0;
-  opacity: 0;
-  transform: scale(0.7) rotate(-5deg);
-  transition: all 1s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
+  img {
+    width: 100%;
+    max-height: 320px;
+    height: auto;
+    object-fit: cover;
+    object-position: 50% 25%;
+    border-radius: 24px;
+    margin: 20px 0;
+    opacity: 0;
+    transform: scale(0.7) rotate(-5deg);
+    transition: all 1s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
   body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -90,35 +90,27 @@ img {
   #yes:hover { transform: scale(1.1) rotate(3deg); box-shadow: 0 12px 30px rgba(255,47,104,0.4); }
   @keyframes pulseGlow {
     from { box-shadow: 0 0 15px #ff2f68aa; }
-    to   { box-shadow: 0 0 35px #ff2f68ff; }
+    to { box-shadow: 0 0 35px #ff2f68ff; }
   }
   #no {
     background: linear-gradient(45deg, #a8a8a8, #d3d3d3);
     color: #333;
   }
-  img {
-    width: 100%;
-    max-height: 280px;
-    object-fit: cover;
-    border-radius: 24px;
-    margin: 20px 0;
-    opacity: 0;
-    transform: scale(0.7) rotate(-5deg);
-    transition: all 1s ease;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  }
   .heart, .star {
     position: absolute;
     font-size: 24px;
-    animation: float 8s linear infinite;
     pointer-events: none;
-    opacity: 0.85;
+    opacity: 0.7;
     text-shadow: 0 0 10px rgba(255,255,255,0.8);
+    z-index: 5;
   }
-  .star { color: #ffe066; animation-duration: 10s; }
-  @keyframes float {
-    from { transform: translateY(120vh) rotate(0deg) translateX(-20vw); }
-    to { transform: translateY(-20vh) rotate(720deg) translateX(30vw); }
+  .star { color: #ffe066; }
+  @keyframes bob-up-down {
+    0%, 100%   { transform: translateY(0) rotate(0deg); }
+    25%        { transform: translateY(-35px) rotate(4deg); }
+    50%        { transform: translateY(0) rotate(0deg); }
+    75%        { transform: translateY(35px) rotate(-4deg); }
+    100%       { transform: translateY(0) rotate(0deg); }
   }
   .heart-trail {
     position: absolute;
@@ -140,11 +132,9 @@ img {
     <button id="no">No way... 😢</button>
   </div>
 </div>
-
 <audio id="noSound" src="https://www.myinstants.com/media/sounds/cartoon-boing.mp3"></audio>
 <audio id="yesSound" src="https://www.myinstants.com/media/sounds/tada.mp3"></audio>
 <audio id="finalSound" src="https://www.myinstants.com/media/sounds/kids_cheering.mp3"></audio>
-
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
 const yesBtn = document.getElementById("yes");
@@ -155,7 +145,6 @@ const yesSound = document.getElementById("yesSound");
 const finalSound = document.getElementById("finalSound");
 let yesScale = 1;
 let noCount = 0;
-
 const noTexts = [
   "No way... 😢",
   "Really sure? 🥺",
@@ -164,7 +153,7 @@ const noTexts = [
   "You're breaking my heart! 😭",
   "Please? 🥹❤️",
   "Come on, don’t be shy! 😜",
-  "Not today, Miss heartbreaker? 😅",
+  "Not today, miss heartbreaker? 😅",
   "I’ll bring chocolate if you say yes 🍫💕",
   "My heart can’t handle this 😭💘",
   "You know you want to… 😏💖",
@@ -173,44 +162,46 @@ const noTexts = [
   "Resistance is futile… 😎❤️"
 ];
 
-
 function moveNoButton() {
-  // FUN NO SOUND (BOING)
+  // FUN NO SOUND
   noSound.currentTime = 0;
-  noSound.play().catch(()=>{});
-  
+  noSound.play().catch(() => {});
+
+  // Get card dimensions
   const cardRect = card.getBoundingClientRect();
-  const padding = 10; // extra safety from edges
 
-  const maxX = cardRect.width - noBtn.offsetWidth - padding;
-  const maxY = cardRect.height - noBtn.offsetHeight - padding;
+  // Horizontal: center inside card
+  const x = (card.offsetWidth - noBtn.offsetWidth) / 2;
 
-  // random position within card bounds
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  // Vertical: random up & down **inside card**, leaving padding
+  const padding = 10;
+  const minY = padding;
+  const maxY = card.offsetHeight - noBtn.offsetHeight - padding;
+  const y = minY + Math.random() * (maxY - minY);
 
+  // Position relative to card
   noBtn.style.position = 'absolute';
   noBtn.style.left = x + 'px';
   noBtn.style.top = y + 'px';
 
-  // Update the text
-  noBtn.innerText = noTexts[Math.min(noCount, noTexts.length-1)];
+  // Update text
+  noBtn.innerText = noTexts[Math.min(noCount, noTexts.length - 1)];
   noCount++;
 
-  // Increase YES button scale
+  // Scale YES button
   yesScale += 0.18;
   yesBtn.style.transform = `scale(${yesScale})`;
 
   // Heart / star explosion
-  for(let i=0; i<15; i++){
+  for (let i = 0; i < 15; i++) {
     const e = document.createElement('div');
-    e.className = Math.random()>0.6 ? 'star' : 'heart';
-    e.innerText = Math.random()>0.6 ? '✨' : '💖';
-    e.style.left = Math.random()*100 + 'vw';
-    e.style.top = Math.random()*60 + 'vh';
-    e.style.fontSize = (Math.random()*20 + 18) + 'px';
+    e.className = Math.random() > 0.6 ? 'star' : 'heart';
+    e.innerText = Math.random() > 0.6 ? '✨' : '💖';
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.top = Math.random() * 60 + 'vh';
+    e.style.fontSize = (Math.random() * 20 + 18) + 'px';
     document.body.appendChild(e);
-    setTimeout(()=>e.remove(), 3000);
+    setTimeout(() => e.remove(), 3000);
   }
 }
 
@@ -224,12 +215,10 @@ function followYes(event) {
   yesBtn.style.transition = 'transform 0.15s ease-out';
   yesBtn.style.transform = `translate(${dx*0.25}px, ${dy*0.25}px) scale(${yesScale}) rotate(${dx*0.05}deg)`;
 }
-
 noBtn.addEventListener("click", moveNoButton);
 noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoButton(); });
 document.addEventListener("mousemove", followYes);
 document.addEventListener("touchmove", (e)=> followYes(e.touches[0]));
-
 document.addEventListener("mousemove", (e) => {
   if (Math.random() < 0.15) {
     const heart = document.createElement("div");
@@ -245,29 +234,28 @@ document.addEventListener("mousemove", (e) => {
     setTimeout(() => heart.remove(), 800);
   }
 });
-
-setInterval(()=>{
+setInterval(() => {
+  if (Math.random() > 0.4) return;
   const elem = document.createElement('div');
-  elem.className = Math.random()>0.65 ? 'star' : 'heart';
-  elem.innerText = Math.random()>0.65 ? '🌟' : '❤️';
-  elem.style.left = Math.random()*100 + "vw";
-  elem.style.top = Math.random()*-20 + "vh";
-  elem.style.fontSize = (Math.random()*18 + 16) + "px";
-  elem.style.animationDuration = (Math.random()*6 + 8) + 's';
+  const isStar = Math.random() > 0.55;
+  elem.className = isStar ? 'star' : 'heart';
+  elem.innerText = isStar ? (Math.random() > 0.5 ? '🌟' : '✨') : '❤️';
+  const side = Math.random() > 0.5 ? 'left' : 'right';
+  const distanceFromEdge = 5 + Math.random() * 18;
+  elem.style[side] = distanceFromEdge + 'vw';
+  elem.style.top = (30 + Math.random() * 50) + 'vh';
+  const size = 16 + Math.random() * 18;
+  elem.style.fontSize = size + 'px';
+  elem.style.animation = `bob-up-down ${8 + Math.random() * 7}s infinite ease-in-out`;
   document.body.appendChild(elem);
-  setTimeout(()=>elem.remove(), 10000);
-}, 400);
-
+  setTimeout(() => elem.remove(), 22000);
+}, 1800);
 yesBtn.addEventListener("click",()=>{
-  // FUN HAPPY SOUNDS
   yesSound.currentTime = 0;
   yesSound.play().catch(()=>{});
-  
-  // FINAL CELEBRATION SOUND
   setTimeout(() => {
     finalSound.play().catch(()=>{});
   }, 400);
-
   const heartShape = confetti.shapeFromText({ text: '❤️', scalar: 1.2 });
   confetti({
     particleCount: 150,
@@ -288,8 +276,6 @@ yesBtn.addEventListener("click",()=>{
     spread: 80,
     origin: { x: 0.8, y: 0.5 }
   });
-
-
   card.innerHTML = `
     <img src="apeksha.jpg" alt="My Apeksha ❤️" style="opacity:1; transform:scale(1) rotate(0deg);">
     <h1 class="final-message">YESSSS Wifeyyy!!! 🥹💕</h1>
