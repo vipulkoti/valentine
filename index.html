@@ -19,53 +19,41 @@
     /* Floating hearts */
     .heart {
       position: absolute;
-      color: #ff4d6d;
-      font-size: 20px;
+      font-size: 18px;
       animation: float 6s linear infinite;
       opacity: 0.7;
       pointer-events: none;
     }
 
     @keyframes float {
-      from {
-        transform: translateY(100vh);
-      }
-      to {
-        transform: translateY(-10vh);
-      }
+      from { transform: translateY(100vh); }
+      to { transform: translateY(-10vh); }
     }
 
     .card {
       background: white;
-      padding: 32px;
-      border-radius: 22px;
+      padding: 34px;
+      border-radius: 24px;
       text-align: center;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.25);
       position: relative;
       z-index: 10;
       max-width: 360px;
       width: 90%;
     }
 
-    img {
-      width: 100%;
-      border-radius: 18px;
-      margin-bottom: 20px;
-      transition: transform 0.4s ease;
-    }
-
     h1 {
-      margin-bottom: 24px;
       font-size: 22px;
+      margin-bottom: 30px;
     }
 
     button {
       font-size: 18px;
-      padding: 12px 26px;
+      padding: 14px 28px;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
 
     #yes {
@@ -79,74 +67,87 @@
       color: white;
       position: absolute;
     }
+
+    img {
+      width: 100%;
+      border-radius: 18px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
 
   <div class="card" id="card">
-    <img id="photo" src="apeksha.jpg" alt="Us ❤️">
     <h1>Hey Apeksha… will you be my Valentine? 💖</h1>
     <button id="yes">Yes 😍</button>
     <button id="no">No 😢</button>
   </div>
 
+  <!-- Sounds -->
+  <audio id="noSound" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
+  <audio id="yesSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
-    // Floating hearts generator ❤️
+    /* Floating hearts ❤️ */
     setInterval(() => {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.innerText = "❤️";
       heart.style.left = Math.random() * 100 + "vw";
-      heart.style.fontSize = Math.random() * 18 + 14 + "px";
+      heart.style.fontSize = Math.random() * 14 + 14 + "px";
       document.body.appendChild(heart);
       setTimeout(() => heart.remove(), 6000);
-    }, 300);
+    }, 350);
 
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
     const card = document.getElementById("card");
-    const photo = document.getElementById("photo");
+    const noSound = document.getElementById("noSound");
+    const yesSound = document.getElementById("yesSound");
 
     let yesScale = 1;
     let noCount = 0;
+    let speedMultiplier = 1;
 
     const noTexts = [
       "No 😢",
       "Are you sure?",
       "Think again 😏",
-      "Last chance 😳",
-      "Nice try 😈"
+      "Last chance…"
     ];
 
-    // No button runs away + grows Yes
     noBtn.addEventListener("mouseover", () => {
+      noSound.play().catch(() => {});
+
       const x = Math.random() * (window.innerWidth - 120);
-      const y = Math.random() * (window.innerHeight - 60);
+      const y = Math.random() * (window.innerHeight - 80);
+
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
       noBtn.innerText = noTexts[Math.min(noCount, noTexts.length - 1)];
       noCount++;
 
-      yesScale += 0.15;
+      yesScale += 0.18;
       yesBtn.style.transform = `scale(${yesScale})`;
+
+      speedMultiplier += 0.2;
     });
 
-    // Yes button celebration 🎉
     yesBtn.addEventListener("click", () => {
+      yesSound.play().catch(() => {});
+
       confetti({
-        particleCount: 350,
-        spread: 130,
+        particleCount: 400,
+        spread: 140,
         origin: { y: 0.6 }
       });
 
-      photo.style.transform = "scale(1.08)";
-
       card.innerHTML = `
-        <img src="apeksha.jpg" style="width:100%; border-radius:18px; margin-bottom:20px;">
+        <img src="apeksha.jpg" alt="Us ❤️">
         <h1>YAY!!! 🥰💘</h1>
         <p style="font-size:16px; line-height:1.5;">
           Best decision ever ❤️<br><br>
