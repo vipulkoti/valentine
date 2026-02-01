@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Be My Valentine ❤️</title>
+  <title>Apeksha ❤️</title>
+
   <style>
     body {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Comic Sans MS', cursive;
       height: 100vh;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,30 +18,40 @@
 
     .card {
       background: white;
-      padding: 40px;
-      border-radius: 20px;
+      padding: 35px;
+      border-radius: 22px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 10;
+      max-width: 340px;
+    }
+
+    img {
+      width: 100%;
+      border-radius: 18px;
+      margin-bottom: 20px;
+      transition: transform 0.4s ease;
     }
 
     h1 {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
+      font-size: 22px;
     }
 
     button {
-      font-size: 20px;
+      font-size: 18px;
       padding: 12px 24px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
-      position: relative;
     }
 
     #yes {
       background: #ff4d6d;
       color: white;
-      margin-right: 20px;
+      margin-right: 15px;
     }
 
     #no {
@@ -51,42 +63,49 @@
 </head>
 <body>
 
-  <div class="card">
-    <h1>Will you be my Valentine? 💖</h1>
+  <div class="card" id="card">
+    <img id="photo" src="apeksha.jpg" alt="Us ❤️">
+    <h1>Hey Apeksha… will you be my Valentine? 💖</h1>
     <button id="yes">Yes 😍</button>
     <button id="no">No 😢</button>
   </div>
 
-  <!-- Confetti library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
+    const card = document.getElementById("card");
+    const photo = document.getElementById("photo");
 
     let yesScale = 1;
 
     noBtn.addEventListener("mouseover", () => {
       const x = Math.random() * (window.innerWidth - 100);
       const y = Math.random() * (window.innerHeight - 50);
-
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      yesScale += 0.1;
+      yesScale += 0.12;
       yesBtn.style.transform = `scale(${yesScale})`;
     });
 
     yesBtn.addEventListener("click", () => {
       confetti({
-        particleCount: 200,
-        spread: 100,
+        particleCount: 300,
+        spread: 120,
         origin: { y: 0.6 }
       });
 
-      document.querySelector(".card").innerHTML = `
-        <h1>Yay!!! 💘🥰</h1>
-        <p>Best decision ever ❤️</p>
+      photo.style.transform = "scale(1.05)";
+
+      card.innerHTML = `
+        <img src="apeksha.jpg" style="width:100%; border-radius:18px; margin-bottom:20px;">
+        <h1>YAY!!! 🥰💘</h1>
+        <p>
+          Best decision ever ❤️<br><br>
+          I can't wait to celebrate us 💕
+        </p>
       `;
     });
   </script>
