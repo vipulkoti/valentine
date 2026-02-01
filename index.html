@@ -6,7 +6,19 @@
 <title>Apeksha ❤️ My Forever Valentine</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Dancing+Script:wght@700&display=swap');
-
+img {
+  width: 100%;
+  max-height: 320px;          /* ← increase from 280px */
+  height: auto;               /* add this */
+  object-fit: cover;          /* or contain */
+  object-position: 50% 25%;   /* add this line */
+  border-radius: 24px;
+  margin: 20px 0;
+  opacity: 0;
+  transform: scale(0.7) rotate(-5deg);
+  transition: all 1s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
   body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -257,8 +269,9 @@ yesBtn.addEventListener("click",()=>{
     origin: { x: 0.8, y: 0.5 }
   });
 
+
   card.innerHTML = `
-    <img src="apeksha2.jpg" alt="My Apeksha ❤️" style="opacity:1; transform:scale(1) rotate(0deg);">
+    <img src="apeksha.jpg" alt="My Apeksha ❤️" style="opacity:1; transform:scale(1) rotate(0deg);">
     <h1 class="final-message">YESSSS Wifeyyy!!! 🥹💕</h1>
     <p style="font-size:20px; line-height:1.6; color:#333; font-weight:500;">
       I knew your heart would say yes... 😌<br>
