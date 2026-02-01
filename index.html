@@ -103,11 +103,27 @@
   <audio id="noSound" src="https://assets.mixkit.co/active_storage/sfx/2351/2351-preview.mp3"></audio>
   <audio id="yesSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
+  <!-- Background music -->
+  <audio id="bgMusic" src="https://assets.mixkit.co/music/preview/mixkit-bubbly-fun-123.mp3" loop></audio>
+
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
-    // Floating hearts
+    // Start music on first interaction
+    let musicStarted = false;
+    function startMusic() {
+      if(!musicStarted){
+        document.getElementById("bgMusic").play().catch(() => {});
+        musicStarted = true;
+        window.removeEventListener('click', startMusic);
+        window.removeEventListener('touchstart', startMusic);
+      }
+    }
+    window.addEventListener('click', startMusic);
+    window.addEventListener('touchstart', startMusic);
+
+    // Floating hearts ❤️
     setInterval(() => {
       const heart = document.createElement("div");
       heart.className = "heart";
@@ -157,6 +173,7 @@
 
     yesBtn.addEventListener("click", () => {
       yesSound.play().catch(() => {});
+      document.getElementById("bgMusic").play().catch(() => {});
 
       confetti({
         particleCount: 400,
