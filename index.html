@@ -13,216 +13,189 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
   }
 
   .card {
     background: white;
-    padding: 28px 24px 40px;
-    border-radius: 28px;
+    padding: 30px;
+    border-radius: 30px;
     text-align: center;
-    width: calc(90% - 20px);
-    max-width: 380px;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 50px rgba(255, 47, 104, 0.3);
     position: relative;
     z-index: 10;
+    border: 4px solid #fff;
   }
 
   h1 {
-    font-size: 28px;
-    line-height: 1.3;
-    margin-bottom: 28px;
+    font-size: 26px;
     color: #ff2f68;
-  }
-
-  .final-message {
-    font-family: 'Arial Black', Gadget, sans-serif;
-    font-size: 24px;
-    color: #ff2f68;
+    margin-bottom: 20px;
   }
 
   .buttons {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    position: relative;
-    height: 90px;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    min-height: 150px; /* Space for the runaway button */
   }
 
   button {
-    font-size: 20px;
-    padding: 16px 26px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 15px 30px;
     border: none;
-    border-radius: 20px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: transform 0.2s ease;
-    position: relative;
-    z-index: 2;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   }
 
   #yes {
-    background: #ff2f68;
+    background: #44dd44;
     color: white;
+    z-index: 100;
   }
 
   #no {
-    background: #d3d3d3;
-    color: #333;
+    background: #ff4444;
+    color: white;
+    position: absolute; /* Needed for the "runaway" effect */
   }
 
-  img {
-    width: 100%;
-    border-radius: 20px;
-    margin-bottom: 18px;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.8s ease;
+  .final-message {
+    animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
   }
 
   .heart, .star {
     position: absolute;
-    font-size: 18px;
-    animation: float 6s linear infinite;
     pointer-events: none;
-    opacity: 0.7;
+    animation: floatUp 4s linear forwards;
   }
 
-  .star { color: #ffe066; }
-
-  @keyframes float {
-    from { transform: translateY(100vh) rotate(0deg); }
-    to { transform: translateY(-10vh) rotate(360deg); }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
 <div class="card" id="card">
-  <h1 id="question">🚨 Valentine Alert! 🚨<br>Do you want to be kidnapped by love today? 😏💖</h1>
-  <div class="buttons">
-    <button id="yes">YES 😍</button>
-    <button id="no">No 😢</button>
+  <div id="ui-content">
+    <h1 id="question">🚨 URGENT MESSAGE! 🚨<br>Apeksha, will you be my Valentine? 💖</h1>
+    <div class="buttons" id="btnContainer">
+      <button id="yes">YES! 😍</button>
+      <button id="no">No ❌</button>
+    </div>
   </div>
 </div>
 
-<!-- Sounds -->
-<audio id="noSound" src="https://assets.mixkit.co/active_storage/sfx/164/164-preview.mp3"></audio>
-<audio id="yesSound" src="https://assets.mixkit.co/active_storage/sfx/353/353-preview.mp3"></audio>
+<audio id="noSound" src="https://www.myinstants.com/media/sounds/discord-notification.mp3"></audio>
+<audio id="sadSound" src="https://www.myinstants.com/media/sounds/spongebob-boe.mp3"></audio>
+<audio id="yesSound" src="https://www.myinstants.com/media/sounds/cheer.mp3"></audio>
 <audio id="bgMusic" src="https://assets.mixkit.co/music/preview/mixkit-bubbly-fun-123.mp3" loop></audio>
 
-<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
 const card = document.getElementById("card");
-const noSound = document.getElementById("noSound");
-const yesSound = document.getElementById("yesSound");
 const bgMusic = document.getElementById("bgMusic");
+const noSound = document.getElementById("noSound");
+const sadSound = document.getElementById("sadSound");
+const yesSound = document.getElementById("yesSound");
 
-let yesScale = 1;
 let noCount = 0;
+const noTexts = [
+  "Are you sure?", 
+  "Pllleeeease? 🥺", 
+  "Apeksha, think again!", 
+  "Wrong button! 😂", 
+  "I'll buy you snacks! 🍕", 
+  "Look at the Green button! ➡️"
+];
 
-// Funny text for No button
-const noTexts = ["No 😢","Are you sure?","Think again 😏","Last chance…"];
-
-// Move No button randomly & play funny sound
-function moveNoButton() {
-  noSound.currentTime = 0;
-  noSound.play().catch(()=>{});
-
-  const cardRect = card.getBoundingClientRect();
-  const maxX = cardRect.width - noBtn.offsetWidth - 10;
-  const maxY = 60;
-
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-
-  noBtn.style.transform = `translate(${x}px, ${y}px)`;
-
-  noBtn.innerText = noTexts[Math.min(noCount, noTexts.length-1)];
+// 1. RUNAWAY NO BUTTON LOGIC
+const moveNo = () => {
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+  
+  // Change text and play "sad/oops" sound
+  noBtn.innerText = noTexts[noCount % noTexts.length];
   noCount++;
+  noSound.play();
+  
+  // Make the Yes button bigger every time she tries to click No
+  const currentScale = 1 + (noCount * 0.1);
+  yesBtn.style.transform = `scale(${currentScale})`;
+};
 
-  yesScale += 0.2;
-  yesBtn.style.transform = `scale(${yesScale})`;
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", () => {
+    sadSound.play();
+    alert("Nice try, but No isn't an option! 😜");
+});
 
-  // Tiny stars + hearts explosion on No
-  for(let i=0;i<10;i++){
-    const e = document.createElement('div');
-    e.className = Math.random()>0.7 ? 'star':'heart';
-    e.innerText = Math.random()>0.7?'⭐':'❤️';
-    e.style.left = (Math.random()*100) + 'vw';
-    e.style.top = (Math.random()*50)+'px';
-    e.style.fontSize = (Math.random()*12+14)+'px';
-    document.body.appendChild(e);
-    setTimeout(()=>e.remove(), 1500);
-  }
-}
+// 2. YES BUTTON SUCCESS
+yesBtn.addEventListener("click", () => {
+  yesSound.play();
+  bgMusic.pause(); // Stop background music to play victory sound
+  
+  // Mega Confetti
+  const duration = 5 * 1000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-// Make Yes follow finger / mouse
-function followYes(event){
-  const rect = yesBtn.getBoundingClientRect();
-  const dx = event.clientX - (rect.left + rect.width/2);
-  const dy = event.clientY - (rect.top + rect.height/2);
-  // Yes button avoids No button
-  const noRect = noBtn.getBoundingClientRect();
-  if(Math.abs(dx) < 50 && Math.abs(dy) < 50){
-    yesBtn.style.transform = `translate(${dx*1.5}px, ${dy*1.5}px) scale(${yesScale})`;
-  } else {
-    yesBtn.style.transform = `translate(${dx*0.2}px, ${dy*0.2}px) scale(${yesScale})`;
-  }
-}
-
-noBtn.addEventListener("click", moveNoButton);
-noBtn.addEventListener("touchstart", moveNoButton);
-document.addEventListener("mousemove", followYes);
-document.addEventListener("touchmove", (e)=> followYes(e.touches[0]));
-
-// Start background music on first tap
-let musicStarted = false;
-function startMusic(){
-  if(!musicStarted){
-    bgMusic.play().catch(()=>{});
-    musicStarted = true;
-    window.removeEventListener("click", startMusic);
-    window.removeEventListener("touchstart", startMusic);
-  }
-}
-window.addEventListener("click", startMusic);
-window.addEventListener("touchstart", startMusic);
-
-// Floating hearts + stars
-setInterval(()=>{
-  const elem = document.createElement(Math.random()>0.7 ? 'div':'div');
-  elem.className = Math.random()>0.7 ? 'star':'heart';
-  elem.innerText = Math.random()>0.7?'⭐':'❤️';
-  elem.style.left = Math.random()*100 + "vw";
-  elem.style.fontSize = (Math.random()*12+14) + "px";
-  document.body.appendChild(elem);
-  setTimeout(()=>elem.remove(),6000);
-},300);
-
-// Yes button clicked → YAY, confetti, photo reveal
-yesBtn.addEventListener("click",()=>{
-  yesSound.currentTime = 0;
-  yesSound.play().catch(()=>{});
-  bgMusic.play().catch(()=>{});
-
-  confetti({particleCount:400,spread:160,origin:{y:0.6}});
-  confetti({particleCount:100,spread:180,origin:{y:0.2,x:0.3},colors:['#ff2f68','#ffe066','#ff9a9e']});
-  confetti({particleCount:100,spread:180,origin:{y:0.2,x:0.7},colors:['#ff2f68','#ffe066','#ff9a9e']});
+  const interval = setInterval(function() {
+    const timeLeft = animationEnd - Date.now();
+    if (timeLeft <= 0) return clearInterval(interval);
+    const particleCount = 50 * (timeLeft / duration);
+    confetti({...defaults, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 }});
+  }, 250);
 
   card.innerHTML = `
-    <img src="apeksha.jpg" alt="Us ❤️" style="opacity:1;transform:scale(1);transition:all 0.8s ease">
-    <h1 class="final-message">YAY APEKSHA!!! 🥰💘</h1>
-    <p style="font-size:18px; line-height:1.5; color:#444;">
-      Best answer ever ❤️<br>
-      Valentine’s Day = YOU + ME 😌<br>
-      Get ready 💕
-    </p>
+    <div class="final-message">
+      <h1 style="font-size: 40px;">YAYYY! 🥰</h1>
+      <img src="apeksha.jpg" alt="Love" style="width:100%; border-radius:20px; margin: 10px 0;">
+      <p style="font-size: 20px; color: #ff2f68; font-weight: bold;">
+        I KNEW YOU'D SAY YES! <br> Best Valentine's Day ever, Apeksha! 💖✨
+      </p>
+    </div>
   `;
 });
+
+// 3. AMBIANCE: Floating hearts background
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = Math.random() > 0.5 ? "heart" : "star";
+  heart.innerHTML = Math.random() > 0.5 ? "❤️" : "💖";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.top = "100vh";
+  heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 4000);
+}, 300);
+
+// Start music on first interaction
+document.body.addEventListener('click', () => {
+  bgMusic.play().catch(e => console.log("Music waiting for interaction"));
+}, { once: true });
+
 </script>
 </body>
 </html>
