@@ -3,40 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apeksha ❤️</title>
+<title>For Apeksha ❤️</title>
 <style>
-  /* Clean, Readable Fonts */
   body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     height: 100vh;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+    background: #ffafbd; /* Solid soft pink for better contrast */
+    background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+    overflow: hidden;
   }
 
   .card {
     background: white;
-    padding: 40px;
-    border-radius: 20px;
+    padding: 40px 20px;
+    border-radius: 25px;
     text-align: center;
-    width: 350px;
-    min-height: 400px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    position: relative;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
     z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
   h1 {
-    font-size: 28px;
+    font-size: 26px;
     color: #d63384;
     margin-bottom: 30px;
-    line-height: 1.4;
+    font-weight: 800;
   }
 
   .button-container {
@@ -44,142 +40,133 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    height: 100px;
-    position: relative; /* Keeps the No button contained here */
+    height: 120px; /* Space for the button to move within */
+    position: relative;
   }
 
   button {
     font-size: 18px;
     font-weight: bold;
-    padding: 12px 25px;
+    padding: 15px 25px;
     border: none;
-    border-radius: 12px;
+    border-radius: 15px;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: transform 0.2s;
   }
 
   #yes {
     background-color: #28a745;
     color: white;
-    z-index: 100;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
   }
 
   #no {
     background-color: #dc3545;
     color: white;
-    position: absolute; /* Moves relative to the button-container */
-    transition: all 0.2s ease;
+    position: relative; /* Starts normal, then we switch to absolute in JS */
+    z-index: 5;
   }
 
-  img {
+  .final-screen img {
     width: 100%;
-    max-height: 250px;
-    object-fit: cover;
     border-radius: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
-  .heart {
+  .floating-heart {
     position: absolute;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 20px;
     pointer-events: none;
-    animation: floatUp 4s linear infinite;
+    animation: floatUp 5s linear infinite;
   }
 
   @keyframes floatUp {
-    0% { transform: translateY(100vh) scale(1); opacity: 1; }
-    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    from { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+    to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
 <div class="card" id="card">
-  <div id="content-wrap">
-    <h1 id="question">🚨 Valentine Alert! 🚨<br>Apeksha, will you be mine? 🥰</h1>
-    <div class="button-container" id="btn-area">
+  <div id="main-content">
+    <h1>🚨 Valentine Alert! 🚨<br>Apeksha, will you be mine? 🥰</h1>
+    <div class="button-container" id="area">
       <button id="yes">YES! 😍</button>
       <button id="no">No 😢</button>
     </div>
   </div>
 </div>
 
-<audio id="sadSound" src="https://www.myinstants.com/media/sounds/spongebob-fail.mp3"></audio>
+<audio id="noSound" src="https://www.myinstants.com/media/sounds/discord-notification.mp3"></audio>
 <audio id="yesSound" src="https://www.myinstants.com/media/sounds/tada.mp3"></audio>
-<audio id="bgMusic" src="https://assets.mixkit.co/music/preview/mixkit-bubbly-fun-123.mp3" loop></audio>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
-const btnArea = document.getElementById("btn-area");
+const area = document.getElementById("area");
 const card = document.getElementById("card");
-
-const sadSound = document.getElementById("sadSound");
+const noSound = document.getElementById("noSound");
 const yesSound = document.getElementById("yesSound");
-const bgMusic = document.getElementById("bgMusic");
 
 let yesScale = 1;
 
-// FIX: This keeps the No button INSIDE the button-container so it never vanishes
-function moveNo() {
-  sadSound.currentTime = 0;
-  sadSound.play().catch(() => {});
+function dodge() {
+  // Play a "bloop" sound when she tries to click no
+  noSound.currentTime = 0;
+  noSound.play().catch(()=>{});
 
-  // Get dimensions of the container
-  const padding = 20;
-  const maxWidth = btnArea.clientWidth - noBtn.clientWidth - padding;
-  const maxHeight = btnArea.clientHeight - noBtn.clientHeight - padding;
+  // Switch to absolute positioning only when the dodge starts
+  noBtn.style.position = 'absolute';
 
-  // Generate random position within the button container
-  const newX = Math.random() * maxWidth;
-  const newY = Math.random() * maxHeight;
+  // Calculate boundaries within the button area
+  const maxX = area.clientWidth - noBtn.clientWidth;
+  const maxY = area.clientHeight - noBtn.clientHeight;
 
-  noBtn.style.left = `${newX}px`;
-  noBtn.style.top = `${newY}px`;
+  const randomX = Math.floor(Math.random() * maxX);
+  const randomY = Math.floor(Math.random() * maxY);
 
-  // Make Yes button grow so it's easier to hit
-  yesScale += 0.15;
+  noBtn.style.left = randomX + 'px';
+  noBtn.style.top = randomY + 'px';
+
+  // Make Yes button grow!
+  yesScale += 0.2;
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-// Event listeners for the runaway button
-noBtn.addEventListener("mouseover", moveNo);
+// Mobile and Desktop support
+noBtn.addEventListener("mouseenter", dodge);
 noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  moveNo();
+  dodge();
 });
 
-// Yes Button Action
 yesBtn.addEventListener("click", () => {
   yesSound.play();
   confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
   card.innerHTML = `
-    <img src="apeksha.jpg" alt="Us ❤️" onerror="this.src='https://via.placeholder.com/300x250?text=I+Love+You'">
-    <h1 style="color: #ff2f68;">YAY APEKSHA! 🥰💘</h1>
-    <p style="font-size: 18px; color: #555;">The best choice ever! <br> Get ready for the best Valentine's! 🍫</p>
+    <div class="final-screen">
+      <img src="apeksha.jpg" alt="Us" onerror="this.src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l4pTdcifP3GDmXgzS/giphy.gif'">
+      <h1 style="color: #ff2f68; margin: 0;">YAY APEKSHA! 💖</h1>
+      <p style="font-size: 18px; margin-top: 10px;">The best answer ever! <br> Get ready for a special day! 🌹</p>
+    </div>
   `;
 });
 
-// Start background music on first interaction
-window.addEventListener("click", () => {
-  bgMusic.play().catch(() => {});
-}, { once: true });
-
-// Background floating hearts
+// Floating hearts in background
 setInterval(() => {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = "❤️";
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.fontSize = (Math.random() * 20 + 10) + "px";
-  h.style.animationDuration = (Math.random() * 3 + 2) + "s";
-  document.body.appendChild(h);
-  setTimeout(() => h.remove(), 5000);
-}, 400);
-
+  const heart = document.createElement("div");
+  heart.className = "floating-heart";
+  heart.innerHTML = Math.random() > 0.5 ? "❤️" : "💖";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 5000);
+}, 500);
 </script>
+
 </body>
 </html>
