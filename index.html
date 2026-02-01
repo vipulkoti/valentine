@@ -183,37 +183,27 @@ const noTexts = [
 ];
 
 function moveNoButton() {
-  // FUN NO SOUND
   noSound.currentTime = 0;
   noSound.play().catch(() => {});
 
-  // 1. Ensure the button is absolute-positioned
-  noBtn.style.position = 'absolute';
-
-  // 2. Calculate the "Safe Zone" inside the card
-  // We subtract the button's own size so it doesn't hang off the edge
-  const buffer = 20; // Extra padding from the card edges
-  const maxX = card.clientWidth - noBtn.offsetWidth - buffer;
-  const maxY = card.clientHeight - noBtn.offsetHeight - buffer;
-
-  // 3. Generate random positions within that safe zone
-  // We use Math.max to ensure we don't get negative numbers on very small screens
-  const randomX = Math.max(buffer, Math.random() * maxX);
-  const randomY = Math.max(buffer, Math.random() * maxY);
-
-  // 4. Apply the position
-  noBtn.style.left = randomX + 'px';
-  noBtn.style.top = randomY + 'px';
-
-  // --- Rest of your existing logic ---
+  // Update text
   noBtn.innerText = noTexts[Math.min(noCount, noTexts.length - 1)];
   noCount++;
+
+  // KEEP CENTERED, JUMP ONLY UP AND DOWN
+  noBtn.style.position = 'absolute';
+  noBtn.style.left = '50%';
+  noBtn.style.transform = `translateX(-50%)`;
+  
+  // Jump between 0 and 70 pixels from the top of the button area
+  const randomY = Math.floor(Math.random() * 70);
+  noBtn.style.top = randomY + 'px';
 
   // Scale YES button
   yesScale += 0.18;
   yesBtn.style.transform = `scale(${yesScale})`;
 
-  // Heart / star explosion
+  // Explosion effect
   for (let i = 0; i < 15; i++) {
     const e = document.createElement('div');
     e.className = Math.random() > 0.6 ? 'star' : 'heart';
