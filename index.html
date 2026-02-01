@@ -129,21 +129,15 @@
   </div>
 </div>
 
-<!-- Audio: Mixkit free assets (if any fail → download from mixkit.co and host yourself) -->
-<audio id="noSound" src="https://assets.mixkit.co/active_storage/sfx/105/slow-sad-trombone-fail.mp3"></audio>
-<audio id="yesSound" src="https://assets.mixkit.co/active_storage/sfx/2053/celebration-success-01.mp3"></audio>
-<audio id="kissSound" src="https://assets.mixkit.co/active_storage/sfx/1292/cartoon-friendly-kiss.mp3"></audio>
-<audio id="bgMusic" src="https://assets.mixkit.co/music/preview/mixkit-love-is-eternal-129.mp3" loop preload="auto"></audio>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<audio id="noSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_7329580e60.mp3"></audio> <audio id="yesSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3"></audio> <audio id="celebrateSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_1067339179.mp3"></audio> <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
 const card = document.getElementById("card");
 const noSound = document.getElementById("noSound");
 const yesSound = document.getElementById("yesSound");
-const kissSound = document.getElementById("kissSound");
-const bgMusic = document.getElementById("bgMusic");
+const celebrateSound = document.getElementById("celebrateSound");
+
 let yesScale = 1;
 let noCount = 0;
 
@@ -159,11 +153,13 @@ const noTexts = [
 function moveNoButton() {
   noSound.currentTime = 0;
   noSound.play().catch(()=>{});
+  
   const cardRect = card.getBoundingClientRect();
   const maxX = cardRect.width - noBtn.offsetWidth - 20;
   const maxY = cardRect.height - noBtn.offsetHeight - 40;
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
+  
   noBtn.style.position = 'absolute';
   noBtn.style.left = x + 'px';
   noBtn.style.top = y + 'px';
@@ -172,7 +168,6 @@ function moveNoButton() {
   yesScale += 0.18;
   yesBtn.style.transform = `scale(${yesScale})`;
   
-  // Heart explosion on No
   for(let i=0; i<15; i++){
     const e = document.createElement('div');
     e.className = Math.random()>0.6 ? 'star' : 'heart';
@@ -200,7 +195,6 @@ noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoButton(); 
 document.addEventListener("mousemove", followYes);
 document.addEventListener("touchmove", (e)=> followYes(e.touches[0]));
 
-// Heart trail
 document.addEventListener("mousemove", (e) => {
   if (Math.random() < 0.15) {
     const heart = document.createElement("div");
@@ -217,19 +211,6 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
-// Music start
-let musicStarted = false;
-function startMusic() {
-  if(!musicStarted){
-    bgMusic.volume = 0.3;
-    bgMusic.play().catch(()=>{});
-    musicStarted = true;
-  }
-}
-window.addEventListener("click", startMusic);
-window.addEventListener("touchstart", startMusic);
-
-// Floating hearts/stars
 setInterval(()=>{
   const elem = document.createElement('div');
   elem.className = Math.random()>0.65 ? 'star' : 'heart';
@@ -242,15 +223,16 @@ setInterval(()=>{
   setTimeout(()=>elem.remove(), 10000);
 }, 400);
 
-// Yes clicked
 yesBtn.addEventListener("click",()=>{
+  // Play Yes Sound
   yesSound.currentTime = 0;
   yesSound.play().catch(()=>{});
-  kissSound.currentTime = 0;
-  kissSound.play().catch(()=>{});
-  bgMusic.play().catch(()=>{});
   
-  // Heart confetti
+  // Play Celebration Sound at the end
+  setTimeout(() => {
+    celebrateSound.play().catch(()=>{});
+  }, 500);
+
   const heartShape = confetti.shapeFromText({ text: '❤️', scalar: 1.2 });
   confetti({
     particleCount: 150,
@@ -273,8 +255,8 @@ yesBtn.addEventListener("click",()=>{
   });
 
   card.innerHTML = `
-    <img src="apeksha.jpg" alt="My Wifey ❤️" style="opacity:1; transform:scale(1) rotate(0deg);">
-    <h1 class="final-message">YESSSS Wifeyyy!!! 🥹💕</h1>
+    <img src="apeksha.jpg" alt="My Apeksha ❤️" style="opacity:1; transform:scale(1) rotate(0deg);">
+    <h1 class="final-message">YESSSS APEKSHA!!! 🥹💕</h1>
     <p style="font-size:20px; line-height:1.6; color:#333; font-weight:500;">
       I knew your heart would say yes... 😌<br>
       You're my favorite person in the whole universe ❤️<br><br>
