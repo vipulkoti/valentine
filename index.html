@@ -129,15 +129,18 @@
   </div>
 </div>
 
-<audio id="noSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_7329580e60.mp3"></audio> <audio id="yesSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3"></audio> <audio id="celebrateSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_1067339179.mp3"></audio> <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<audio id="noSound" src="https://www.myinstants.com/media/sounds/cartoon-boing.mp3"></audio>
+<audio id="yesSound" src="https://www.myinstants.com/media/sounds/tada.mp3"></audio>
+<audio id="finalSound" src="https://www.myinstants.com/media/sounds/kids_cheering.mp3"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
 const card = document.getElementById("card");
 const noSound = document.getElementById("noSound");
 const yesSound = document.getElementById("yesSound");
-const celebrateSound = document.getElementById("celebrateSound");
-
+const finalSound = document.getElementById("finalSound");
 let yesScale = 1;
 let noCount = 0;
 
@@ -151,6 +154,7 @@ const noTexts = [
 ];
 
 function moveNoButton() {
+  // FUN NO SOUND (BOING)
   noSound.currentTime = 0;
   noSound.play().catch(()=>{});
   
@@ -159,7 +163,6 @@ function moveNoButton() {
   const maxY = cardRect.height - noBtn.offsetHeight - 40;
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
-  
   noBtn.style.position = 'absolute';
   noBtn.style.left = x + 'px';
   noBtn.style.top = y + 'px';
@@ -224,14 +227,14 @@ setInterval(()=>{
 }, 400);
 
 yesBtn.addEventListener("click",()=>{
-  // Play Yes Sound
+  // FUN HAPPY SOUNDS
   yesSound.currentTime = 0;
   yesSound.play().catch(()=>{});
   
-  // Play Celebration Sound at the end
+  // FINAL CELEBRATION SOUND
   setTimeout(() => {
-    celebrateSound.play().catch(()=>{});
-  }, 500);
+    finalSound.play().catch(()=>{});
+  }, 400);
 
   const heartShape = confetti.shapeFromText({ text: '❤️', scalar: 1.2 });
   confetti({
