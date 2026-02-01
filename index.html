@@ -18,10 +18,10 @@
 
   .card {
     background: white;
-    padding: 28px 24px 36px;
+    padding: 28px 24px 40px; /* extra bottom padding */
     border-radius: 28px;
     text-align: center;
-    width: 90%;
+    width: calc(90% - 20px); /* squeeze 10px each side */
     max-width: 380px;
     box-shadow: 0 20px 45px rgba(0,0,0,0.25);
     position: relative;
@@ -32,6 +32,12 @@
     font-size: 28px;
     line-height: 1.3;
     margin-bottom: 28px;
+    color: #ff2f68;
+  }
+
+  .final-message {
+    font-family: 'Arial Black', Gadget, sans-serif;
+    font-size: 24px;
     color: #ff2f68;
   }
 
@@ -123,7 +129,7 @@ const question = document.getElementById("question");
 let yesScale = 1;
 let noCount = 0;
 
-// Restrict No button movement
+// Restrict No button movement within card
 function moveNoButton() {
   noSound.play().catch(()=>{});
   const cardRect = card.getBoundingClientRect();
@@ -143,7 +149,7 @@ function moveNoButton() {
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-// Make Yes follow finger/mouse
+// Yes button follows finger/mouse
 function followYes(event){
   const rect = yesBtn.getBoundingClientRect();
   const dx = event.clientX - (rect.left + rect.width/2);
@@ -158,7 +164,7 @@ document.addEventListener("touchmove", (e)=>{
   followYes(e.touches[0]);
 });
 
-// Start background music on first tap
+// Start music on first tap
 let musicStarted = false;
 function startMusic(){
   if(!musicStarted){
@@ -187,14 +193,13 @@ yesBtn.addEventListener("click",()=>{
   yesSound.play().catch(()=>{});
   bgMusic.play().catch(()=>{});
 
-  // Confetti
   confetti({particleCount:400,spread:160,origin:{y:0.6}});
   confetti({particleCount:100,spread:180,origin:{y:0.2, x:0.3},colors:['#ff2f68','#ffe066','#ff9a9e']});
   confetti({particleCount:100,spread:180,origin:{y:0.2, x:0.7},colors:['#ff2f68','#ffe066','#ff9a9e']});
 
   card.innerHTML = `
     <img src="apeksha.jpg" alt="Us ❤️" style="opacity:1;transform:scale(1);transition:all 0.8s ease">
-    <h1>YAY APEKSHA!!! 🥰💘</h1>
+    <h1 class="final-message">YAY APEKSHA!!! 🥰💘</h1>
     <p style="font-size:18px; line-height:1.5; color:#444;">
       Best answer ever ❤️<br>
       Valentine’s Day = YOU + ME 😌<br>
