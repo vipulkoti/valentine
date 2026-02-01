@@ -162,15 +162,7 @@ const noTexts = [
   "Think again, cutie... 😏",
   "Last chance... 💔",
   "You're breaking my heart! 😭",
-  "Please? 🥹❤️",
-  "Come on, don’t be shy! 😜",
-  "Not today, mister heartbreaker? 😅",
-  "I’ll bring chocolate if you say yes 🍫💕",
-  "My heart can’t handle this 😭💘",
-  "You know you want to… 😏💖",
-  "Seriously, one tiny YES? 🥰",
-  "I’m armed with hugs and love! 🤗💗",
-  "Resistance is futile… 😎❤️"
+  "Please? 🥹❤️"
 ];
 
 function moveNoButton() {
@@ -179,18 +171,28 @@ function moveNoButton() {
   noSound.play().catch(()=>{});
   
   const cardRect = card.getBoundingClientRect();
-  const maxX = cardRect.width - noBtn.offsetWidth - 20;
-  const maxY = cardRect.height - noBtn.offsetHeight - 40;
+  const padding = 10; // extra safety from edges
+
+  const maxX = cardRect.width - noBtn.offsetWidth - padding;
+  const maxY = cardRect.height - noBtn.offsetHeight - padding;
+
+  // random position within card bounds
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
+
   noBtn.style.position = 'absolute';
   noBtn.style.left = x + 'px';
   noBtn.style.top = y + 'px';
+
+  // Update the text
   noBtn.innerText = noTexts[Math.min(noCount, noTexts.length-1)];
   noCount++;
+
+  // Increase YES button scale
   yesScale += 0.18;
   yesBtn.style.transform = `scale(${yesScale})`;
-  
+
+  // Heart / star explosion
   for(let i=0; i<15; i++){
     const e = document.createElement('div');
     e.className = Math.random()>0.6 ? 'star' : 'heart';
@@ -202,6 +204,7 @@ function moveNoButton() {
     setTimeout(()=>e.remove(), 3000);
   }
 }
+
 
 function followYes(event) {
   const rect = yesBtn.getBoundingClientRect();
